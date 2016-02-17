@@ -21,6 +21,17 @@ module.exports = function (opts) {
       }
     }));
     this.knex = global.__knex;
+    
+    if(opts.debug || env.KOA_KNEX_DEBUG) {
+      var self = this;
+      this.knex.once('start', function (builder){
+        var start = Date.now();
+        builder.once('end', function (){
+          var timing = Date.now() - start;
+          console.log(timing + 'msec');
+        });
+      });
+    }
 
     yield next;
   };
